@@ -5,18 +5,15 @@ export class Parking {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'partner_id' })
-  @Column({ nullable: false })
+  @Column({ name: 'partner_id', nullable: false })
   partnerId: string;
 
   @Column({ nullable: false })
   name: string;
 
-  @Column({ name: 'cost_per_hour', type: 'int' })
-  @Column({ nullable: false })
+  @Column({ name: 'cost_per_hour', type: 'int', nullable: false })
   costPerHour: number;
 
-  @Column({ name: 'number_of_parking_lots', type: 'int' })
-  @Column({ nullable: false })
+  @Column({ name: 'number_of_parking_lots', type: 'int', nullable: false })
   numberOfParkingLots: number;
 }
