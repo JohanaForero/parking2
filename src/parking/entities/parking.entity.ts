@@ -6,14 +6,17 @@ export class Parking {
   id: number;
 
   @Column({ name: 'partner_id' })
+  @Column({ nullable: false })
   partnerId: string;
 
-  @Column({ name: 'name' })
-  parkingName: string;
+  @Column({ nullable: false })
+  name: string;
 
   @Column({ name: 'cost_per_hour', type: 'int' })
+  @Column({ nullable: false })
   costPerHour: number;
 
   @Column({ name: 'number_of_parking_lots', type: 'int' })
+  @Column({ nullable: false })
   numberOfParkingLots: number;
 }

@@ -14,13 +14,7 @@ export class ParkingController {
 
   @Post('/parking')
   async create(@Body() createParkingDto: CreateParkingDto) {
-    const existingParking = await this.parkingService.findByName(createParkingDto.name);
-    
-    if (existingParking) {
-      // Lanzar excepción HTTP con un mensaje y estado
-      throw new ParkingAlreadyExistsException();
-    }
-
+    console.log(createParkingDto);
     return await this.parkingService.create(createParkingDto);
   }
 

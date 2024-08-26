@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Parking } from '../entities/parking.entity';
+import { ParkingAlreadyExistsException } from '../exception/ParkingAlreadyExistsException';
 
 @Injectable()
 export class ParkingService {
@@ -14,9 +15,10 @@ export class ParkingService {
     return this.parkingRepo.find();
   }
 
-  async findByName(parkingName: string): Promise<Parking | null> {
+  async findByName(name: string): Promise<Parking | null> {
+    console.log(name);
     return this.parkingRepo.createQueryBuilder('parking')
-      .where('parking.parkingName = :name', { name: parkingName })
+      .where('parking.name = :name', { name: name })
       .getOne();
   }
 
@@ -27,12 +29,12 @@ export class ParkingService {
   }
 
   async create(parkingData: Partial<Parking>): Promise<Parking> {
-    const existingParking = await this.findByName(parkingData.parkingName);
-
+    const existingParking = await this.findByName(parkingData.name);
+    console.log(existingParking);
+    console.log(parkingData.name);
     if (existingParking) {
-      throw new ConflictException('El nombre del parking ya existe.');
+      throw new ParkingAlreadyExistsException();
     }
-
     const parking = this.parkingRepo.create(parkingData);
     return this.parkingRepo.save(parking);
   }
