@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ParkingService } from '../parking.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateParkingDto } from '../dto/create-parking.dto';
 import { UpdateParkingDto } from '../dto/update-parking.dto';
+import { ParkingService } from '../services/parking.service';
+import { ParkingValidations } from '../services/validations/ParkingValidations';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { ParkingAlreadyExistsException } from '../exception/ParkingAlreadyExistsException';
 
-@Controller('parking')
+@Controller('api')
 export class ParkingController {
-  constructor(private readonly parkingService: ParkingService) {}
+  constructor(private parkingService: ParkingService,
+    private readonly parkingValidationService: ParkingValidations
+  ) {}
 
-  @Post()
-  create(@Body() createParkingDto: CreateParkingDto) {
-    return this.parkingService.create(createParkingDto);
+  @Post('/parking')
+  async create(@Body() createParkingDto: CreateParkingDto) {
+    const existingParking = await this.parkingService.findByName(createParkingDto.name);
+    
+    if (existingParking) {
+      // Lanzar excepción HTTP con un mensaje y estado
+      throw new ParkingAlreadyExistsException();
+    }
+
+    return await this.parkingService.create(createParkingDto);
   }
 
   @Get()
@@ -28,7 +40,7 @@ export class ParkingController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.parkingService.remove(+id);
+  delete(@Param('id') id: number) {
+    return this.parkingService.delete(id);
   }
 }
