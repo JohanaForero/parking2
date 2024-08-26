@@ -1,0 +1,3 @@
+-- CREATE DATABASE IF NOT EXISTS parking2
+SELECT 'CREATE DATABASE parking2'
+WHERE NOT EXISTS (SELECT FROM parking2 WHERE datname = 'parking2')\gexec
