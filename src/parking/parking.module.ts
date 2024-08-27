@@ -4,11 +4,13 @@ import { ParkingService } from './services/parking.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Parking } from './entities/parking.entity';
 import { ParkingValidations } from './services/validations/ParkingValidations';
+import { AuthModule } from 'src/auth/auth.module';
+import { RolesGuard } from 'src/auth/roles.guardia';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Parking])],
+  imports: [AuthModule, TypeOrmModule.forFeature([Parking])],
   controllers: [ParkingController],
-  providers: [ParkingService, ParkingValidations],
+  providers: [ParkingService, ParkingValidations, RolesGuard],
   exports: [ParkingService, ParkingValidations]
 })
 export class ParkingModule {}
