@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ParkingModule } from './parking/parking.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Parking } from './parking/entities/parking.entity';
-import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { UsersService } from './users/users.service';
 import { UsersModule } from './users/users.module';
+import { User } from './users/entity/user.entity';
+import { ParkingModule } from './parking/parking.module';
+import { Parking } from './parking/entities/parking.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -18,15 +16,15 @@ import { UsersModule } from './users/users.module';
       username: 'admin1',
       password: 'password',
       database: 'parking2',
-      entities: [Parking],
+      entities: [User, Parking],
       synchronize: true,
       retryDelay: 3000,
       retryAttempts: 10
     }),
-    ParkingModule,
     UsersModule,
+    ParkingModule,
   ],
   controllers: [],
-  providers: [UsersService],
+  providers: [],
 })
 export class AppModule {}
