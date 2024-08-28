@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entity/user.entity';
 import { ParkingModule } from './parking/parking.module';
 import { Parking } from './parking/entities/parking.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Parking } from './parking/entities/parking.entity';
     }),
     UsersModule,
     ParkingModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

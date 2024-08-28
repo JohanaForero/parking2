@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,11 +17,22 @@ export class UsersService {
         return this.userRepo.save(user);
       }
 
-    async findByName(email: string): Promise<User | null> {
+    async createAdmin(userData: Partial<User>): Promise<User> {  
+        userData.role = UserRole.ADMIN;
+        const user = this.userRepo.create(userData);
+        return this.userRepo.save(user);
+      }
+
+    async findByEmail(email: string): Promise<User> {
         console.log(email);
-        return this.userRepo.createQueryBuilder('user')
-          .where('user.email = :email', { email: email })
+        const user = await this.userRepo.createQueryBuilder('user')
+          .where('user.email = :email', { email })
           .getOne();
+
+        if(!user) {
+          throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        return user;
       }
 }
   
