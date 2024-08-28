@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Parking } from '../entities/parking.entity';
@@ -11,7 +11,7 @@ export class ParkingService {
     private readonly parkingRepo: Repository<Parking>,
   ) {}
 
-  findAll() {
+  findAll(): Promise<Parking[]> {
     return this.parkingRepo.find();
   }
 
@@ -22,10 +22,14 @@ export class ParkingService {
       .getOne();
   }
 
-  findOne(id: number) {
-    return this.parkingRepo.findOne({
+  findOne(id: number): Promise<Parking> {
+    const parking =  this.parkingRepo.findOne({
       where: { id }
     });
+    if(!parking) {
+      throw new NotFoundException("No se encontro ningun parqueadero con ese id");
+    }
+    return parking;
   }
 
   async create(parkingData: Partial<Parking>): Promise<Parking> {

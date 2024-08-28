@@ -7,6 +7,7 @@ import { Roles } from 'src/auth/role.decoratior'; // Asegúrate de que esta ruta
 import { UserRole } from 'src/users/service/user.role';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { Parking } from '../entities/parking.entity';
 
 @Controller('api')
 export class ParkingController {
@@ -24,12 +25,14 @@ export class ParkingController {
   }
 
   @Get()
-  findAll() {
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  findAll(): Promise<Parking[]> {
     return this.parkingService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Parking> {
     return this.parkingService.findOne(+id);
   }
 
