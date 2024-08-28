@@ -3,8 +3,10 @@ import { CreateParkingDto } from '../dto/create-parking.dto';
 import { UpdateParkingDto } from '../dto/update-parking.dto';
 import { ParkingService } from '../services/parking.service';
 import { ParkingValidations } from '../services/validations/ParkingValidations';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
-import { ParkingAlreadyExistsException } from '../exception/ParkingAlreadyExistsException';
+import { Roles } from 'src/auth/role.decoratior'; // Asegúrate de que esta ruta sea correcta
+import { UserRole } from 'src/users/service/user.role';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('api')
 export class ParkingController {
@@ -13,6 +15,8 @@ export class ParkingController {
   ) {}
 
   @Post('/parking')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   async create(@Body() createParkingDto: CreateParkingDto) {
   
     console.log(createParkingDto);
