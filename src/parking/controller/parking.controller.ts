@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards, NotFoundException, Put } from '@nestjs/common';
 import { CreateParkingDto } from '../dto/create-parking.dto';
 import { UpdateParkingDto } from '../dto/update-parking.dto';
 import { ParkingService } from '../services/parking.service';
@@ -44,8 +44,10 @@ export class ParkingController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParkingDto: UpdateParkingDto) {
+  @Put(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async update(@Param('id') id: string, @Body() updateParkingDto: UpdateParkingDto) {
     return this.parkingService.update(+id, updateParkingDto);
   }
 

@@ -43,12 +43,13 @@ export class ParkingService {
     return this.parkingRepo.save(parking);
   }
 
-  async update(id: number, body: any) {
+  async update(id: number, body: Partial<Parking>) {
     const parking = await this.parkingRepo.findOne({
       where: { id }
     });
-    this.parkingRepo.merge(parking, body);
-    return this.parkingRepo.save(parking);
+    const updateParking = {...parking, ...body};
+    //this.parkingRepo.merge(parking, body);
+    return this.parkingRepo.save(updateParking);
   }
 
   async delete(id: number): Promise<void> {
