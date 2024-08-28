@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, UseGuards, NotFoundException } from '@nestjs/common';
 import { CreateParkingDto } from '../dto/create-parking.dto';
 import { UpdateParkingDto } from '../dto/update-parking.dto';
 import { ParkingService } from '../services/parking.service';
@@ -32,8 +32,16 @@ export class ParkingController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Parking> {
-    return this.parkingService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<Parking> {
+    try {
+      const parking = await this.parkingService.findOne(+id);
+      return parking;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(`No se encontró ningún parqueadero con el ID ${id}`);
+      }
+      throw error;
+    }
   }
 
   @Patch(':id')
@@ -42,7 +50,8 @@ export class ParkingController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.parkingService.delete(id);
+  async delete(@Param('id') id: number): Promise<{ status: string}> {
+    await this.parkingService.delete(id);
+    return { status: 'OK'};
   }
 }

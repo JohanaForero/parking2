@@ -22,8 +22,8 @@ export class ParkingService {
       .getOne();
   }
 
-  findOne(id: number): Promise<Parking> {
-    const parking =  this.parkingRepo.findOne({
+  async findOne(id: number): Promise<Parking> {
+    const parking = await this.parkingRepo.findOne({
       where: { id }
     });
     if(!parking) {
@@ -51,8 +51,12 @@ export class ParkingService {
     return this.parkingRepo.save(parking);
   }
 
-  async delete(id: number) {
+  async delete(id: number): Promise<void> {
+    const result = await this.parkingRepo.delete(id);
     await this.parkingRepo.delete(id);
-    return true;
+    if (result.affected === 0) {
+      throw new NotFoundException(`Parking with ID ${id} not found`);
+
+    }
   }
 }
