@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ParkingLot } from './parkinglot.entity';
 
 @Entity()
 export class Parking {
@@ -16,4 +17,7 @@ export class Parking {
 
   @Column({ name: 'number_of_parking_lots', type: 'int', nullable: false })
   numberOfParkingLots: number;
+
+  @OneToMany(() => ParkingLot, (parkingLot) => parkingLot.parking)
+  parkingLots: ParkingLot[];
 }

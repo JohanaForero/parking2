@@ -6,6 +6,7 @@ import { User } from './users/entity/user.entity';
 import { ParkingModule } from './parking/parking.module';
 import { Parking } from './parking/entities/parking.entity';
 import { AuthModule } from './auth/auth.module';
+import { ParkingLot } from './parking/entities/parkinglot.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AuthModule } from './auth/auth.module';
       username: 'admin1',
       password: 'password',
       database: 'parking2',
-      entities: [User, Parking],
+      entities: [User, Parking, ParkingLot],
       synchronize: true,
       retryDelay: 3000,
       retryAttempts: 10

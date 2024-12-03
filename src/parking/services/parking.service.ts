@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Parking } from '../entities/parking.entity';
@@ -11,7 +11,7 @@ export class ParkingService {
     private readonly parkingRepo: Repository<Parking>,
   ) {}
 
-  findAll() {
+  findAll(): Promise<Parking[]> {
     return this.parkingRepo.find();
   }
 
@@ -22,10 +22,14 @@ export class ParkingService {
       .getOne();
   }
 
-  findOne(id: number) {
-    return this.parkingRepo.findOne({
+  async findOne(id: number): Promise<Parking> {
+    const parking = await this.parkingRepo.findOne({
       where: { id }
     });
+    if(!parking) {
+      throw new NotFoundException("No se encontro ningun parqueadero con ese id");
+    }
+    return parking;
   }
 
   async create(parkingData: Partial<Parking>): Promise<Parking> {
@@ -39,16 +43,21 @@ export class ParkingService {
     return this.parkingRepo.save(parking);
   }
 
-  async update(id: number, body: any) {
+  async update(id: number, body: Partial<Parking>) {
     const parking = await this.parkingRepo.findOne({
       where: { id }
     });
-    this.parkingRepo.merge(parking, body);
-    return this.parkingRepo.save(parking);
+    const updateParking = {...parking, ...body};
+    //this.parkingRepo.merge(parking, body);
+    return this.parkingRepo.save(updateParking);
   }
 
-  async delete(id: number) {
+  async delete(id: number): Promise<void> {
+    const result = await this.parkingRepo.delete(id);
     await this.parkingRepo.delete(id);
-    return true;
+    if (result.affected === 0) {
+      throw new NotFoundException(`Parking with ID ${id} not found`);
+
+    }
   }
 }
